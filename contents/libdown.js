@@ -1,14 +1,23 @@
+console.log('branch fixes');
 let isbook = false;
 if (document.querySelector('#books-entity-teaser') != null)
   isbook = true;
 if (isbook) {
-
-  let author = document.querySelector(".contributorNameID").textContent;
-  let title = document.querySelector("#productTitle").textContent;
-  let publisher = document.querySelector("ul.a-spacing-none:nth-child(1) > li:nth-child(1) > span:nth-child(1) > span:nth-child(2)").textContent;
-  let isbn10 = rmhy(document.querySelector("ul.a-spacing-none:nth-child(1) > li:nth-child(4) > span:nth-child(1) > span:nth-child(2)").textContent);
-  let isbn13 = rmhy(document.querySelector("ul.a-spacing-none:nth-child(1) > li:nth-child(5) > span:nth-child(1) > span:nth-child(2)").textContent);
-  console.log(isbn13, isbn10);
+  let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
+  for (var i = 0; i < detailsarray.length; i++) {
+    let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
+    switch (arr[0]) {
+      case 'Publisher':
+        var publisher = arr[1];
+        break;
+      case 'ISBN-10':
+        var isbn10 = arr[1];
+        break;
+      case 'ISBN-13':
+        var isbn13 = arr[1];
+        break;
+    }
+  }
   const regex = /\d\d\d\d/;
   let year = publisher.match(regex).toString();
   console.log(parse(title));
@@ -18,26 +27,42 @@ if (isbook) {
     let parser = new DOMParser();
     let doc = parser.parseFromString(html, 'text/html');
     let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
-    array.shift();
-    let results = search(year, author, publisher, isbn13, isbn10, array);
-    let best = Array.from(results)[results.size - 1][0];
-    var bestlink = best.children[9].firstElementChild.href;
-    console.log(bestlink);
-    return bestlink;
+    return array;
 
-  }).then(function(url) {
-    fetch(url).then(response => response.text()).then(function(html) {
-      let parser = new DOMParser();
-      let doc = parser.parseFromString(html, 'text/html');
-      let link = doc.querySelectorAll('#download a')[2].href;
-      downloadURI(link, 'hello');
-    });
+  }).then(function(array) {
+    if (array.length != 1) {
+      array.shift();
+      let results = search(year, author, publisher, isbn13, isbn10, array);
+      let best = Array.from(results)[results.size - 1][0];
+      var bestlink = best.children[9].firstElementChild.href;
+      console.log(bestlink);
+
+      fetch(bestlink).then(response => response.text()).then(function(html) {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(html, 'text/html');
+        let link = doc.querySelectorAll('#download a')[2].href;
+        downloadURI(link, null);
+      });
+    } else {
+      let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author) + '&language=English';
+      console.log(url);
+      fetch(url).then(response => response.text()).then(function(html) {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(html, 'text/html');
+        let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
+        let results = searchfiction(author, array);
+        let best = Array.from(results)[results.size - 1][0];
+        var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
+        console.log(bestlink);
+        fetch(bestlink).then(response => response.text()).then(function(html) {
+          let parser = new DOMParser();
+          let doc = parser.parseFromString(html, 'text/html');
+          let link = doc.querySelectorAll('#download a')[1].href;
+          downloadURI(link, null);
+        });
+      });
+    }
   });
-  // fetch(bestlink).then(response => response.text()).then(function(html) {
-  //   let parser = new DOMParser();
-  //   let doc = parser.parseFromString(html, 'text/html');
-  //   console.log(doc);
-  // })
 }
 
 function downloadURI(uri, name) {
@@ -56,7 +81,7 @@ function parse(title) {
   for (let count = 0; count < title.length; count++) {
     if (title[count] == " ") {
       newtitle += "+";
-    } else if (title[count] == '(' || title[count] == ',') {
+    } else if (title[count] == '(' || title[count] == ',' || title[count] == ':') {
       if (title[count - 1] == ' ') {
         return newtitle.slice(0, -1);
       }
@@ -102,7 +127,7 @@ function search(year, author, publisher, isbn13, isbn10, array) {
     }
     if (tr.children[1] != null) {
       if (tr.children[8].innerText == 'pdf') {
-        trscore += 20;
+        trscore += 30;
       }
     }
     scoreboard.set(tr, trscore);
@@ -110,6 +135,31 @@ function search(year, author, publisher, isbn13, isbn10, array) {
   var scoreboardAsc = new Map([...scoreboard.entries()].sort());
   return scoreboardAsc;
 }
+
+function searchfiction(author, array) {
+  const scoreboard = new Map();
+
+  for (var i = 0; i < array.length; i++) {
+    var tr = array[i];
+    var trscore = 0;
+    var splitauthor = author.split(" ");
+    if (tr.children[0] != null) {
+      if (tr.children[1].innerText.includes(splitauthor[0]) || tr.children[1].innerText.includes(splitauthor[splitauthor.length - 1])) {
+        trscore += 100;
+      }
+    }
+
+    if (tr.children[4].innerText.split(' /')[0] == 'pdf') {
+      trscore += 30;
+    }
+
+    scoreboard.set(tr, trscore);
+  };
+  var scoreboardAsc = new Map([...scoreboard.entries()].sort());
+  return scoreboardAsc;
+}
+
+
 
 function rmhy(isbn) {
   let newisbn = '';
