@@ -4,6 +4,8 @@ if (document.querySelector('#books-entity-teaser') != null)
   isbook = true;
 if (isbook) {
   let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
+  let author = document.querySelector(".contributorNameID").textContent;
+  let title = document.querySelector("#productTitle").textContent;
   for (var i = 0; i < detailsarray.length; i++) {
     let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
     switch (arr[0]) {
@@ -32,7 +34,7 @@ if (isbook) {
   }).then(function(array) {
     if (array.length != 1) {
       array.shift();
-      let results = search(year, author, publisher, isbn13, isbn10, array);
+      let results = search(year, author, isbn13, isbn10, array);
       let best = Array.from(results)[results.size - 1][0];
       var bestlink = best.children[9].firstElementChild.href;
       console.log(bestlink);
@@ -93,7 +95,7 @@ function parse(title) {
   return newtitle;
 }
 
-function search(year, author, publisher, isbn13, isbn10, array) {
+function search(year, author, isbn13, isbn10, array) {
   const scoreboard = new Map();
 
   for (var i = 0; i < array.length; i++) {
