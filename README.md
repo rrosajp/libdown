@@ -6,7 +6,7 @@ Browse to an Amazon book and click on the icons. Wait for it to download. Note t
 # Updates in v1.1
 Added better fiction support.
 
-#To-Do
+# To-Do
 Add better ui.
 Add preferences.
 Add processing for publisher and language.
