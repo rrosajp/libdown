@@ -9,15 +9,20 @@
     "48": "icons/index.png"
   },
   "permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "storage"
   ],
+  "options_ui": {
+    "page": "settings/options.html"
+  },
   "browser_action": {
     "default_icon": "icons/index.png",
     "default_title": "LibDown",
     "default_popup": "popup/popup.html"
   },
-  "content_scripts": [
-  ]
-
-
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "addon@example.com"
+    }
+  }
 }
