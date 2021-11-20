@@ -6,6 +6,8 @@ for (var i = 0; i < detailsarray.length; i++) {
   switch (arr[0]) {
     case 'Publisher':
       var publisher = arr[1];
+      const regex = /\d\d\d\d/;
+      var year = publisher.match(regex).toString();
       break;
     case 'ISBN-10':
       var isbn10 = arr[1];
@@ -15,8 +17,6 @@ for (var i = 0; i < detailsarray.length; i++) {
       break;
   }
 }
-const regex = /\d\d\d\d/;
-let year = publisher.match(regex).toString();
 console.log(parse(title));
 let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
 console.log(url);

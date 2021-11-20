@@ -3,16 +3,20 @@
 # libdown
 The book lover's best friend. The world's best book search combined with the best free book database. Never scroll through hundreds of matches again.
 
-# How to Use
+## How to Use
 Browse to an Amazon book and click on the icons. Wait for it to download. Note that PAPERBACK needs to be selected. Kindle and other formats are not currently supported. Only FIREFOX supported right now. To add the add on, click on the gear icon in the firefox add ons page and select the xpi file.
 
-# Updates in v1.1
-Added better fiction support.
+### Updates in v.13
+Add support for other Amazon domains.
 
-# Updates in v1.2
+### Updates in v1.2
 Add valid book checking.
 
-# To-Do
+### Updates in v1.1
+Added better fiction support.
+
+
+### To-Do
 Add support for other languages of Amazon.
 Add preferences.
 Add processing for publisher and language.
