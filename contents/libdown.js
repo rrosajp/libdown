@@ -1,71 +1,66 @@
-console.log('branch fixes');
-let isbook = false;
-if (document.querySelector('#books-entity-teaser') != null)
-  isbook = true;
-if (isbook) {
-  let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
-  let author = document.querySelector(".contributorNameID").textContent;
-  let title = document.querySelector("#productTitle").textContent;
-  for (var i = 0; i < detailsarray.length; i++) {
-    let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
-    switch (arr[0]) {
-      case 'Publisher':
-        var publisher = arr[1];
-        break;
-      case 'ISBN-10':
-        var isbn10 = arr[1];
-        break;
-      case 'ISBN-13':
-        var isbn13 = arr[1];
-        break;
-    }
+let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
+let author = document.querySelector(".contributorNameID").textContent;
+let title = document.querySelector("#productTitle").textContent;
+for (var i = 0; i < detailsarray.length; i++) {
+  let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
+  switch (arr[0]) {
+    case 'Publisher':
+      var publisher = arr[1];
+      break;
+    case 'ISBN-10':
+      var isbn10 = arr[1];
+      break;
+    case 'ISBN-13':
+      var isbn13 = arr[1];
+      break;
   }
-  const regex = /\d\d\d\d/;
-  let year = publisher.match(regex).toString();
-  console.log(parse(title));
-  let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
-  console.log(url);
-  fetch(url).then(response => response.text()).then(function(html) {
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(html, 'text/html');
-    let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
-    return array;
+}
+const regex = /\d\d\d\d/;
+let year = publisher.match(regex).toString();
+console.log(parse(title));
+let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
+console.log(url);
+fetch(url).then(response => response.text()).then(function(html) {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(html, 'text/html');
+  let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
+  return array;
 
-  }).then(function(array) {
-    if (array.length != 1) {
-      array.shift();
-      let results = search(year, author, isbn13, isbn10, array);
+}).then(function(array) {
+  if (array.length != 1) {
+    array.shift();
+    let results = search(year, author, isbn13, isbn10, array);
+    let best = Array.from(results)[results.size - 1][0];
+    var bestlink = best.children[9].firstElementChild.href;
+    console.log(bestlink);
+
+    fetch(bestlink).then(response => response.text()).then(function(html) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(html, 'text/html');
+      let link = doc.querySelectorAll('#download a')[2].href;
+      downloadURI(link, null);
+    });
+  } else {
+    let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author) + '&language=English';
+    console.log(url);
+    fetch(url).then(response => response.text()).then(function(html) {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(html, 'text/html');
+      let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
+      let results = searchfiction(author, array);
       let best = Array.from(results)[results.size - 1][0];
-      var bestlink = best.children[9].firstElementChild.href;
+      var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
       console.log(bestlink);
-
       fetch(bestlink).then(response => response.text()).then(function(html) {
         let parser = new DOMParser();
         let doc = parser.parseFromString(html, 'text/html');
-        let link = doc.querySelectorAll('#download a')[2].href;
+        let link = doc.querySelectorAll('#download a')[1].href;
         downloadURI(link, null);
       });
-    } else {
-      let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author) + '&language=English';
-      console.log(url);
-      fetch(url).then(response => response.text()).then(function(html) {
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, 'text/html');
-        let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
-        let results = searchfiction(author, array);
-        let best = Array.from(results)[results.size - 1][0];
-        var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
-        console.log(bestlink);
-        fetch(bestlink).then(response => response.text()).then(function(html) {
-          let parser = new DOMParser();
-          let doc = parser.parseFromString(html, 'text/html');
-          let link = doc.querySelectorAll('#download a')[1].href;
-          downloadURI(link, null);
-        });
-      });
-    }
-  });
-}
+    });
+  }
+});
+
 
 function downloadURI(uri, name) {
   var link = document.createElement("a");

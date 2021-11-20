@@ -1,11 +1,11 @@
-html, body {
+body {
   width: 200px;
+  margin: 0 auto;
+  padding: 0 20px 20px 20px;
+  border: 5px solid black;
 }
 
-.downloading {
-  margin: 3% auto;
-  padding: 4px;
-  text-align: center;
-  font-size: 1.5em;
-  cursor: pointer;
+
+h3 {
+  color:red;
 }

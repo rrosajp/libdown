@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "LibDown",
-  "version": "1.1",
+  "version": "1.2",
 
   "description": "Quickly download books while using Amazon",
   "icons": {
