@@ -1,11 +1,30 @@
-body {
-  width: 200px;
-  margin: 0 auto;
-  padding: 0 20px 20px 20px;
-  border: 5px solid black;
+:root {
+  --text-color: #141414;
 }
 
+body {
+  background-color:  #f7f9f9 ;
+  margin: 0;
+  margin: 30px;
+  font-family: Roboto;
+}
 
-h3 {
-  color:red;
+#title {
+  color: var(--text-color);
+  font-size: 36px;
+  line-height: 52px;
+  margin-top: 20px;
+  font-weight: 900;
+}
+
+#version {
+  color: #626567;
+  font-size: 8px;
+  line-height: 8px;
+  margin-bottom: 30px;
+  font-weight: 100;
+}
+
+#message {
+  color: var(--text-color);
 }

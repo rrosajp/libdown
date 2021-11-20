@@ -1,4 +1,4 @@
-const popmessage = document.body.children[1];
+const popmessage = document.getElementById("message");
 
 function onExecuted(result) {
   popmessage.textContent = 'Valid Paperback. Attempting To Download';
