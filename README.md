@@ -6,7 +6,7 @@ The book lover's best friend. The world's best book search combined with the bes
 ## How to Use
 Browse to an Amazon book and click on the icons. Wait for it to download. Note that PAPERBACK needs to be selected. Kindle and other formats are not currently supported. Only FIREFOX supported right now. To add the add on, click on the gear icon in the firefox add ons page and select the xpi file.
 
-### Updates in v.13
+### Updates in v1.3
 Add support for other Amazon domains.
 
 ### Updates in v1.2
