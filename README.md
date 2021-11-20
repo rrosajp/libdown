@@ -17,10 +17,11 @@ Added better fiction support.
 
 
 ### To-Do
-Add support for other languages of Amazon.
-Add preferences.
-Add processing for publisher and language.
-Remove interference with other extensions.
-Port to Chrome (this may not happen for a while due to a large number of incompatibilities but it is on my to-do list)
+* Add support for other languages of Amazon.
+* Add next best downloads to ui.
+* Add preferences.
+* Add processing for publisher and language.
+* Remove interference with other extensions.
+* Port to Chrome (this may not happen for a while due to a large number of incompatibilities but it is on my to-do list).
 
 Thanks for all the support !
