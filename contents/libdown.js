@@ -1,6 +1,7 @@
 var title;
 var detailsarray;
 var author;
+var fictionarray = [];
 if (document.querySelector('#detailBulletsWrapper_feature_div') != null) {
   var detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
 }
@@ -49,51 +50,60 @@ async function asyncCall() {
     }
   }
   if (author != null) {
-    var url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
+    var nurl = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
+    var furl = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author);
   } else {
-    var url = 'http://libgen.rs/search.php?&req=' + parse(title) + '&column=def&sort=year&res=100';
+    var nurl = 'http://libgen.rs/search.php?&req=' + parse(title) + '&column=def&sort=year&res=100';
+    var furl = 'http://libgen.rs/fiction/?q=' + parse(title);
   }
-  fetch(url).then(response => response.text()).then(function(html) {
-    let parser = new DOMParser();
-    let doc = parser.parseFromString(html, 'text/html');
-    let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
+  const bestnon = await fetch(nurl).then(response => response.text()).then(function(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    var array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
     return array;
 
   }).then(function(array) {
-    if (array.length != 1) {
-      array.shift();
-      let results = search(year, author, isbn13, isbn10, array, filetype, lang);
-      let best = Array.from(results)[results.size - 1][0];
-      var bestlink = best.children[9].firstElementChild.href;
-      fetch(bestlink).then(response => response.text()).then(function(html) {
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, 'text/html');
-        let link = doc.querySelectorAll('#download a')[2].href;
-        downloadURI(link, null);
-      });
-    } else {
-      if (author != null) {
-        var url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author);
+    array.shift();
+    let results = search(year, author, isbn13, isbn10, array, filetype, lang);
+    var best = Array.from(results)[results.size - 1];
+    return best;
+  });
+  console.log(bestnon);
+  console.log(nurl, furl)
+  var link = await fetch(furl).then(response => response.text()).then(function(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    console.log(doc);
+    var fictionarray = Array.from(doc.querySelectorAll(".catalog tbody tr"));
+    console.log(fictionarray);
+    var fictionresults = searchfiction(author, fictionarray, filetype, lang);
+    var bestfiction = Array.from(fictionresults)[fictionresults.size - 1];
+    console.log(bestfiction.length);
+    if (bestfiction != null && bestnon != null) {
+      if (bestfiction[1] > bestnon[1]) {
+        var bestlink = bestfiction[0].children[5].firstElementChild.firstElementChild.firstElementChild.href;
+        console.log('fiction better');
       } else {
-        var url = 'http://libgen.rs/fiction/?q=' + parse(title);
+        console.log('nonfiction better');
+        var bestlink = bestnon[0].children[9].firstElementChild.href;
       }
-      console.log(url);
-      fetch(url).then(response => response.text()).then(function(html) {
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(html, 'text/html');
-        let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
-        let results = searchfiction(author, array, filetype, lang);
-        let best = Array.from(results)[results.size - 1][0];
-        var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
-        console.log(bestlink);
-        fetch(bestlink).then(response => response.text()).then(function(html) {
-          let parser = new DOMParser();
-          let doc = parser.parseFromString(html, 'text/html');
-          let link = doc.querySelectorAll('#download a')[1].href;
-          downloadURI(link, null);
-        });
-      });
+    } else if (bestfiction == null && bestnon != null) {
+      var bestlink = bestnon[0].children[9].firstElementChild.href;
+    } else if (bestfiction != null && bestnon == null) {
+      var bestlink = bestfiction[0].children[5].firstElementChild.firstElementChild.firstElementChild.href;
+      console.log('hello');
+    } else {
+      var bestlink = null;
     }
+    console.log(bestlink);
+    return bestlink;
+
+  });
+  fetch(link).then(response => response.text()).then(function(html) {
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(html, 'text/html');
+    let link = doc.querySelectorAll('#download a')[2].href;
+    downloadURI(link, null);
   });
 
 }
@@ -138,29 +148,29 @@ function search(year, author, isbn13, isbn10, array, filetype, lang) {
       var isbnsplit = isbns.textContent.split(',');
       for (var j = 0; j < isbnsplit.length; j++) {
         if (rmhy(isbnsplit[j]) == isbn13 || rmhy(isbnsplit[j]) == isbn10) {
-          trscore += 30;
+          trscore += 20;
           break;
         }
       }
     }
     if (tr.children[6] != null) {
       if (tr.children[6].innerText == lang) {
-        trscore += 50;
+        trscore += 20;
       }
     }
     if (tr.children[4] != null) {
       if (tr.children[4].innerText >= year) {
-        trscore += 50;
+        trscore += 20;
       }
     }
     if (tr.children[1] != null) {
       if (tr.children[1].innerText.includes(splitauthor[0]) || tr.children[1].innerText.includes(splitauthor[splitauthor.length - 1])) {
-        trscore += 50;
+        trscore += 20;
       }
     }
     if (tr.children[1] != null) {
       if (tr.children[8].innerText == filetype) {
-        trscore += 50;
+        trscore += 20;
       }
     }
     scoreboard.set(tr, trscore);
@@ -178,14 +188,14 @@ function searchfiction(author, array, filetype, lang) {
     var splitauthor = author.split(" ");
     if (tr.children[0] != null) {
       if (tr.children[1].innerText.includes(splitauthor[0]) || tr.children[1].innerText.includes(splitauthor[splitauthor.length - 1])) {
-        trscore += 50;
+        trscore += 100 / 3;
       }
     }
     if (tr.children[3].innerText == lang) {
-      trscore += 50;
+      trscore += 100 / 3;
     }
     if (tr.children[4].innerText.split(' /')[0] == filetype) {
-      trscore += 50;
+      trscore += 100 / 3;
     }
 
     scoreboard.set(tr, trscore);

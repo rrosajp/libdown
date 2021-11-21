@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "LibDown",
-  "version": "1.4",
+  "version": "1.5",
 
   "description": "Quickly download books while using Amazon",
   "icons": {
@@ -22,7 +22,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "addon@example.com"
+      "id": "{050e3ff7-d80e-4d40-8288-43becb2d3319}"
     }
   }
 }
