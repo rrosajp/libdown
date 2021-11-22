@@ -3,7 +3,11 @@
   "manifest_version": 2,
   "name": "LibDown",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "version": "1.5",
+=======
+  "version": "1.2",
+>>>>>>> parent of 5e3c876 (v1.3)
 =======
   "version": "1.2",
 >>>>>>> parent of 5e3c876 (v1.3)
@@ -14,8 +18,14 @@
   },
   "permissions": [
 <<<<<<< HEAD
+<<<<<<< HEAD
     "<all_urls>",
     "storage"
+=======
+    "*://libgen.rs/*",
+    "*://*.amazon.com/*",
+    "*://library.lol/*"
+>>>>>>> parent of 5e3c876 (v1.3)
 =======
     "*://libgen.rs/*",
     "*://*.amazon.com/*",
