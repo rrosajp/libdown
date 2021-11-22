@@ -1,5 +1,6 @@
 let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
-let author = document.querySelector(".contributorNameID").textContent;
+let author = document.querySelector(".contributorNameID").textContent.split(' ');
+let pauthor = author[0] + " " + author[author.length - 1];
 let title = document.querySelector("#productTitle").textContent;
 for (var i = 0; i < detailsarray.length; i++) {
   let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
@@ -18,22 +19,22 @@ for (var i = 0; i < detailsarray.length; i++) {
   }
 }
 console.log(parse(title));
-let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
+let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(pauthor) + '&column=def&sort=year&res=100';
 console.log(url);
 fetch(url).then(response => response.text()).then(function(html) {
   let parser = new DOMParser();
   let doc = parser.parseFromString(html, 'text/html');
   let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
+  console.log(array);
   return array;
 
 }).then(function(array) {
   if (array.length != 1) {
+    browser.runtime.sendMessage('Download found! :) Trying to download ...');
     array.shift();
-    let results = search(year, author, isbn13, isbn10, array);
+    let results = search(year, pauthor, isbn13, isbn10, array);
     let best = Array.from(results)[results.size - 1][0];
     var bestlink = best.children[9].firstElementChild.href;
-    console.log(bestlink);
-
     fetch(bestlink).then(response => response.text()).then(function(html) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
@@ -41,14 +42,17 @@ fetch(url).then(response => response.text()).then(function(html) {
       downloadURI(link, null);
     });
   } else {
-    let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(author) + '&language=English';
-    console.log(url);
+    let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(pauthor) + '&language=English';
     fetch(url).then(response => response.text()).then(function(html) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
       let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
-      if (array != null) browser.runtime.sendMessage('download not found');
-      let results = searchfiction(author, array);
+      if (array == null) {
+        browser.runtime.sendMessage('Download not found :(');
+      } else {
+        browser.runtime.sendMessage('Download found! :) Trying to download ...');
+      }
+      let results = searchfiction(pauthor, array);
       let best = Array.from(results)[results.size - 1][0];
       var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
       console.log(bestlink);
@@ -91,13 +95,13 @@ function parse(title) {
   return newtitle;
 }
 
-function search(year, author, isbn13, isbn10, array) {
+function search(year, pauthor, isbn13, isbn10, array) {
   const scoreboard = new Map();
 
   for (var i = 0; i < array.length; i++) {
     var tr = array[i];
     var trscore = 0;
-    var splitauthor = author.split(" ");
+    var splitauthor = pauthor.split(" ");
     var isbns = tr.children[2].lastElementChild.lastElementChild;
     if (isbns != null) {
       var isbnsplit = isbns.textContent.split(',');
@@ -134,13 +138,13 @@ function search(year, author, isbn13, isbn10, array) {
   return scoreboardAsc;
 }
 
-function searchfiction(author, array) {
+function searchfiction(pauthor, array) {
   const scoreboard = new Map();
 
   for (var i = 0; i < array.length; i++) {
     var tr = array[i];
     var trscore = 0;
-    var splitauthor = author.split(" ");
+    var splitauthor = pauthor.split(" ");
     if (tr.children[0] != null) {
       if (tr.children[1].innerText.includes(splitauthor[0]) || tr.children[1].innerText.includes(splitauthor[splitauthor.length - 1])) {
         trscore += 100;

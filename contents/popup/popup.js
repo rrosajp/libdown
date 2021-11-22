@@ -1,7 +1,7 @@
 const popmessage = document.getElementById("message");
 
 function onExecuted(result) {
-  popmessage.textContent = 'Valid Paperback. Attempting To Download';
+  popmessage.textContent = 'Valid Paperback. Executing...';
   browser.tabs.executeScript({
     file: '/../libdown.js'
   });
