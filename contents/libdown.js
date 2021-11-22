@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var title;
 var detailsarray;
 var author;
@@ -9,6 +10,35 @@ if (document.querySelector(".contributorNameID") != null) {
   var author = document.querySelector(".contributorNameID").innerText;
 }
 var title = document.querySelector("#productTitle").innerText;
+=======
+let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
+let author = document.querySelector(".contributorNameID").textContent;
+let title = document.querySelector("#productTitle").textContent;
+for (var i = 0; i < detailsarray.length; i++) {
+  let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
+  switch (arr[0]) {
+    case 'Publisher':
+      var publisher = arr[1];
+      break;
+    case 'ISBN-10':
+      var isbn10 = arr[1];
+      break;
+    case 'ISBN-13':
+      var isbn13 = arr[1];
+      break;
+  }
+}
+const regex = /\d\d\d\d/;
+let year = publisher.match(regex).toString();
+console.log(parse(title));
+let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(author) + '&column=def&sort=year&res=100';
+console.log(url);
+fetch(url).then(response => response.text()).then(function(html) {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(html, 'text/html');
+  let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
+  return array;
+>>>>>>> parent of 5e3c876 (v1.3)
 
 function onError(error) {
   console.log(`Error: ${error}`);
