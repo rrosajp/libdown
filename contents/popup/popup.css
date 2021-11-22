@@ -30,20 +30,3 @@ body {
   font-size: 24px;
   margin-bottom: 30px;
 }
-
-.button {
-  margin: 3% auto;
-  padding: 4px;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.button:hover {
-  color: #f7f9f9;
-  background-color: var(--text-color);
-}
-
-.button {
-  background-color: #f7f9f9;
-}

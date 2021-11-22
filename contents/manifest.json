@@ -2,56 +2,22 @@
 
   "manifest_version": 2,
   "name": "LibDown",
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  "version": "1.5",
-=======
-  "version": "1.2",
->>>>>>> parent of 5e3c876 (v1.3)
-=======
-  "version": "1.2",
->>>>>>> parent of 5e3c876 (v1.3)
-=======
-  "version": "1.5",
->>>>>>> parent of cfeea07 (Revert "v1.3")
+  "version": "1.4",
 
   "description": "Quickly download books while using Amazon",
   "icons": {
-    "180": "icons/index.png"
+    "48": "index.png"
   },
   "permissions": [
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "<all_urls>",
-    "storage"
-=======
-    "*://libgen.rs/*",
-    "*://*.amazon.com/*",
-    "*://library.lol/*"
->>>>>>> parent of 5e3c876 (v1.3)
-=======
-    "*://libgen.rs/*",
-    "*://*.amazon.com/*",
-    "*://library.lol/*"
->>>>>>> parent of 5e3c876 (v1.3)
-=======
-    "<all_urls>",
-    "storage"
->>>>>>> parent of cfeea07 (Revert "v1.3")
+    "<all_urls>"
   ],
-  "options_ui": {
-    "page": "settings/options.html"
-  },
   "browser_action": {
-    "default_icon": "icons/index.png",
+    "default_icon": "index.png",
     "default_title": "LibDown",
     "default_popup": "popup/popup.html"
   },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "{cd2fb787-9dd8-497e-8e37-3f5a2f53d70b}"
-    }
-  }
+  "content_scripts": [
+  ]
+
+
 }
