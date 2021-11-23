@@ -10,5 +10,9 @@ First, download the repo. Go to the Firefox addons page at about:addons. Click o
 ## How to Use
 Browse to an Amazon book and click on the icons. Wait for it to download. Note that PAPERBACK needs to be selected. Kindle and other formats are not currently supported. Only FIREFOX supported right now. To add the add on, click on the gear icon in the firefox add ons page and select the xpi file.
 
+### TO DO
+* add download and/or link button to catalog
+* add series support
+* add more search engines
 
 Thanks for all the support !
