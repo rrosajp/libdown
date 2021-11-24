@@ -1,4 +1,5 @@
 const popmessage = document.getElementById("message");
+const button = document.getElementById("button");
 
 function onExecuted(result) {
   popmessage.textContent = 'Valid Paperback. Executing...';
@@ -9,7 +10,27 @@ function onExecuted(result) {
 }
 
 function handleMessage(message) {
-  popmessage.textContent = message;
+  if (message.message != null) {
+    popmessage.textContent = message.message;
+  }
+  if (message.label != null) {
+    button.innerText = message.label;
+    button.onclick = function() {
+      browser.tabs.create({
+        url: message.url
+      });
+    }
+    button.style.display = "block";
+  }
+  if (message.downurl != null) {
+    // browser.downloads.download({
+    //   url: message.downurl,
+    //   filename: message.title
+    // });
+    browser.tabs.create({
+      url: message.downurl
+    });
+  }
 }
 
 function onError(error) {

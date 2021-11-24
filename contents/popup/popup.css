@@ -30,3 +30,17 @@ body {
   font-size: 24px;
   margin-bottom: 30px;
 }
+
+#button {
+  background-color: #f7f9f9;
+  font-size: 16px;
+  display: none;
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: 2px solid #141414;
+}
+
+#button:hover {
+  background-color: #141414;
+  color: #f7f9f9;
+}

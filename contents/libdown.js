@@ -1,7 +1,8 @@
 let detailsarray = Array.from(document.querySelector('#detailBulletsWrapper_feature_div').children[2].firstElementChild.children);
 let author = document.querySelector(".contributorNameID").textContent.split(' ');
 let pauthor = author[0] + " " + author[author.length - 1];
-let title = document.querySelector("#productTitle").textContent;
+var title = document.querySelector("#productTitle").textContent;
+var title = title.replace(/(\r\n|\n|\r)/gm, "");
 for (var i = 0; i < detailsarray.length; i++) {
   let arr = (detailsarray[i].firstElementChild.innerText.split('  : '));
   switch (arr[0]) {
@@ -18,19 +19,19 @@ for (var i = 0; i < detailsarray.length; i++) {
       break;
   }
 }
-console.log(parse(title));
 let url = 'http://libgen.rs/search.php?&req=' + parse(title) + '+' + parse(pauthor) + '&column=def&sort=year&res=100';
-console.log(url);
 fetch(url).then(response => response.text()).then(function(html) {
   let parser = new DOMParser();
   let doc = parser.parseFromString(html, 'text/html');
   let array = Array.from(doc.querySelectorAll("table.c > tbody > tr"));
-  console.log(array);
   return array;
-
 }).then(function(array) {
   if (array.length != 1) {
-    browser.runtime.sendMessage('Download found! :) Trying to download ...');
+    browser.runtime.sendMessage({
+      message: 'Download found! :) Trying to download ...',
+      url: url,
+      label: 'Libgen'
+    });
     array.shift();
     let results = search(year, pauthor, isbn13, isbn10, array);
     let best = Array.from(results)[results.size - 1][0];
@@ -39,7 +40,10 @@ fetch(url).then(response => response.text()).then(function(html) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
       let link = doc.querySelectorAll('#download a')[2].href;
-      downloadURI(link, null);
+      browser.runtime.sendMessage({
+        downurl: link,
+        title: title
+      });
     });
   } else {
     let url = 'http://libgen.rs/fiction/?q=' + parse(title) + '+' + parse(pauthor) + '&language=English';
@@ -48,34 +52,42 @@ fetch(url).then(response => response.text()).then(function(html) {
       let doc = parser.parseFromString(html, 'text/html');
       let array = Array.from(doc.querySelectorAll(".catalog tbody tr"));
       if (array == null) {
-        browser.runtime.sendMessage('Download not found :(');
+        browser.runtime.sendMessage({
+          message: 'Download not found :('
+        });
       } else {
-        browser.runtime.sendMessage('Download found! :) Trying to download ...');
+        browser.runtime.sendMessage({
+          message: 'Download found! :) Trying to download ...',
+          url: url,
+          label: 'LibgenFiction'
+        });
       }
       let results = searchfiction(pauthor, array);
       let best = Array.from(results)[results.size - 1][0];
       var bestlink = best.children[5].firstElementChild.firstElementChild.firstElementChild.href;
-      console.log(bestlink);
       fetch(bestlink).then(response => response.text()).then(function(html) {
         let parser = new DOMParser();
         let doc = parser.parseFromString(html, 'text/html');
         let link = doc.querySelectorAll('#download a')[1].href;
-        downloadURI(link, null);
+        // browser.runtime.sendMessage({
+        //   downurl: link,
+        //   title: title
+        // });
       });
     });
   }
 });
 
 
-function downloadURI(uri, name) {
-  var link = document.createElement("a");
-  link.download = name;
-  link.href = uri;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  delete link;
-}
+// function downloadURI(uri, name) {
+//   var link = document.createElement("a");
+//   link.download = name;
+//   link.href = uri;
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+//   delete link;
+// }
 
 function parse(title) {
   let length = title.length;
