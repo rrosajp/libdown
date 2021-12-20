@@ -1,24 +1,17 @@
 {
-
   "manifest_version": 2,
   "name": "LibDown",
-  "version": "1.6",
+  "version": "1.7",
 
   "description": "Quickly download books while using Amazon",
   "icons": {
     "48": "index.png"
   },
-  "permissions": [
-    "<all_urls>",
-    "downloads"
-  ],
+  "permissions": ["<all_urls>", "downloads"],
   "browser_action": {
     "default_icon": "index.png",
     "default_title": "LibDown",
     "default_popup": "popup/popup.html"
   },
-  "content_scripts": [
-  ]
-
-
+  "content_scripts": []
 }
